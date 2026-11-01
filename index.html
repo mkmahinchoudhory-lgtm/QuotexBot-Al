@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="dark-pro" data-layout="classic">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>QUOTEX TRADING BOT - AI Binary Trading Terminal</title>
+  <meta name="theme-color" content="#070b14">
+  <meta name="description" content="Advanced AI Binary Options & Quotex Trading Analysis Terminal by Mk Mahin Choudhory">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Toast Notification -->
+  <div id="toast">বিজ্ঞপ্তি</div>
+
+  <div id="app">
+
+    <!-- ==============================================
+         1. LOGIN VIEW (শুধুমাত্র লগইন না থাকলে দেখাবে)
+         ============================================== -->
+    <div id="login-view">
+      <div class="login-box">
+        <div class="login-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div class="login-header">
+          <h2 data-i18n="loginTitle">QUOTEX TRADING BOT</h2>
+          <p data-i18n="loginSubtitle">অ্যাডভান্সড AI বাইনারি ট্রেডিং অ্যানালাইজার</p>
+        </div>
+
+        <form id="login-form">
+          <div class="input-group">
+            <label data-i18n="usernameLabel">ইউজারনেম</label>
+            <div class="input-field-wrapper">
+              <input type="text" id="login-username" value="mk001" placeholder="mk001" autocomplete="username" required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label data-i18n="passwordLabel">পাসওয়ার্ড</label>
+            <div class="input-field-wrapper">
+              <input type="password" id="login-password" value="mk001" placeholder="mk001" autocomplete="current-password" required>
+              <button type="button" class="toggle-password-btn" id="toggle-password" title="Show/Hide Password">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eye-icon">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="login-options">
+            <label style="cursor: pointer; display: flex; align-items: center;">
+              <input type="checkbox" id="remember-me" checked>
+              <span data-i18n="rememberMe">আমাকে মনে রাখুন</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-cyber-primary" id="login-submit-btn">
+            <span data-i18n="loginBtn">টার্মিনালে প্রবেশ করুন ⚡</span>
+          </button>
+        </form>
+
+        <div class="dev-credit-pill" data-i18n="devCredit">
+          Created by Mk Mahin Choudhory
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==============================================
+         2. DASHBOARD VIEW (লগইন সম্পন্ন হওয়ার পর শুধু এটিই দৃশ্যমান হবে)
+         ============================================== -->
+    <div id="dashboard-view" style="display: none;">
+
+      <!-- TOP STATUS BAR -->
+      <header class="top-bar" id="app-header">
+        <div class="brand-wrapper">
+          <div class="brand-logo-icon">Q</div>
+          <div class="brand-text">
+            <h1 data-i18n="appName">QUOTEX TRADING BOT</h1>
+            <small data-i18n="developerTag">ডেভেলপার: Mk Mahin Choudhory</small>
+          </div>
+        </div>
+        <div class="top-bar-actions">
+          <div class="status-badge" id="market-badge">
+            <span class="status-dot"></span>
+            <span id="market-label" data-i18n="marketActive">LIVE</span>
+          </div>
+          <div class="lang-switch">
+            <button class="lang-btn active" data-lang="bn" onclick="setLang('bn')">বাং</button>
+            <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+          </div>
+          <button id="logout-btn" title="Logout" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;padding:6px;display:flex;align-items:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- SCREEN 1: LIVE SCREEN SHARING & AI ANALYSIS -->
+      <main id="live-screen" class="screen active">
+        <!-- Screen Video Preview Card -->
+        <div class="cyber-card">
+          <div class="cyber-card-title">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              <span data-i18n="navLive">Quotex লাইভ চার্ট স্ট্রিম</span>
+            </h3>
+            <span style="font-size: 11px; color: var(--accent-cyan);" id="stream-status">OFFLINE</span>
+          </div>
+
+          <div class="screen-video-container" id="video-wrapper">
+            <div class="screen-placeholder" id="video-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 7l-7 5 7 5V7z"></path>
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+              </svg>
+              <p style="font-size: 12px;" data-i18n="screenHint">Start Screen Sharing বাটন ট্যাপ করে আপনার Quotex চার্ট স্ক্রিন নির্বাচন করুন।</p>
+            </div>
+            <video id="shared-screen-video" autoplay playsinline muted style="display: none;"></video>
+            <canvas id="screen-canvas-preview" style="display: none;"></canvas>
+            <div class="video-overlay-scanning"></div>
+            <div class="scan-laser-line"></div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn-stream" id="toggle-screen-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+              <span id="stream-btn-text" data-i18n="startScreenShare">Start Screen Sharing</span>
+            </button>
+
+            <button class="btn-scan" id="capture-analyze-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+              <span data-i18n="captureAnalyze">AI চার্ট স্ক্যান</span>
+            </button>
+          </div>
+
+          <!-- 5-Second Real-Time Auto-Pilot & Trade Direction Hero -->
+          <div class="autopilot-card" id="autopilot-box">
+            <div class="autopilot-header">
+              <div class="autopilot-title">
+                <span class="live-pulse-dot"></span>
+                <strong>⚡ ৫ সেকেন্ড AI অটো-অ্যানালাইসিস (Auto-Pilot)</strong>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="autopilot-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="countdown-row">
+              <div class="countdown-indicator">
+                <span>পরবর্তী এনালাইসিস:</span>
+                <span class="countdown-badge" id="countdown-timer">5s</span>
+              </div>
+              <div class="voice-toggle-wrap">
+                <label style="font-size: 11px; display:flex; align-items:center; gap:5px; cursor:pointer; color:var(--accent-cyan);">
+                  <input type="checkbox" id="voice-announcer-toggle" checked style="accent-color:var(--accent-cyan);">
+                  <span>🔊 AI ভয়েস নির্দেশিকা</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Dedicated Direction Guidance Box -->
+            <div class="trade-direction-hero dir-wait" id="trade-direction-box">
+              <div class="direction-badge" id="direction-badge">
+                অপেক্ষা করুন
+              </div>
+              <p class="direction-advice" id="direction-advice">
+                প্রতি ৫ সেকেন্ডে AI চার্ট স্ক্যান করে সবচেয়ে লাভজনক এন্ট্রি নির্দেশ করছে...
+              </p>
+            </div>
+          </div>
+
+          <!-- Scan Interval & Timeframe Config -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+            <div>
+              <label style="font-size: 10px; color: var(--text-secondary);" data-i18n="autoScanLabel">স্ক্যান ফ্রিকোয়েন্সি</label>
+              <select class="custom-select" id="auto-scan-select" style="padding: 6px 10px; font-size: 11px;">
+                <option value="5000" selected>⚡ প্রতি ৫ সেকেন্ড পর পর</option>
+                <option value="15000">১৫ সেকেন্ড পর পর</option>
+                <option value="30000">৩০ সেকেন্ড পর পর</option>
+                <option value="0">ম্যানুয়াল / বন্ধ</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 10px; color: var(--text-secondary);" data-i18n="timeframe">এক্সপায়ারি টাইমফ্রেম</label>
+              <select class="custom-select" id="live-timeframe-select" style="padding: 6px 10px; font-size: 11px;">
+                <option value="1M">1 Minute (1M Expiry)</option>
+                <option value="2M">2 Minutes (2M Expiry)</option>
+                <option value="5M">5 Minutes (5M Expiry)</option>
+                <option value="15M">15 Minutes (15M Expiry)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Signal Outcome Card -->
+        <div id="live-signal-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </main>
+
+      <!-- SCREEN 2: IMAGE UPLOAD & ANALYSIS -->
+      <main id="upload-screen" class="screen">
+        <div class="cyber-card">
+          <div class="cyber-card-title">
+            <h3 data-i18n="uploadTitle">গ্যালারি বা চার্ট স্ক্রিনশট আপলোড</h3>
+            <span style="font-size: 11px; color: var(--accent-cyan);">Multi-Modal Vision</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;" data-i18n="uploadSubtitle">
+            Quotex অ্যাপ থেকে স্ক্রিনশট নিয়ে সরাসরি আপলোড করুন
+          </p>
+
+          <div class="dropzone-box" id="dropzone">
+            <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p style="font-size: 13px; font-weight: 600;" data-i18n="dropzoneText">ছবি সিলেক্ট করুন বা ট্যাপ করুন</p>
+            <span style="font-size: 10px; color: var(--text-secondary);">PNG, JPG, WEBP (Max 25MB)</span>
+            <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+          </div>
+
+          <div class="uploaded-preview-container" id="uploaded-preview-wrap">
+            <img id="uploaded-preview-img" src="" alt="Chart Screenshot Preview">
+          </div>
+
+          <button class="btn-cyber-primary" id="analyze-upload-btn" style="margin-top: 14px; display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span data-i18n="analyzeUploadedImg">AI দিয়ে ছবি বিশ্লেষণ করুন ⚡</span>
+          </button>
+        </div>
+
+        <div id="upload-signal-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </main>
+
+      <!-- SCREEN 3: REAL-TIME SIGNAL DASHBOARD -->
+      <main id="dashboard-screen" class="screen">
+        <div class="cyber-card">
+          <div class="cyber-card-title">
+            <h3 data-i18n="navDashboard">ট্রেডিং ড্যাশবোর্ড ও মার্কেট স্ট্যাটাস</h3>
+            <span class="status-badge" style="background:rgba(0,240,255,0.15); border-color:var(--accent-cyan); color:var(--accent-cyan);">
+              Real-time Engine
+            </span>
+          </div>
+
+          <div class="meta-grid" style="margin-top: 0;">
+            <div class="meta-item">
+              <span class="meta-item-label">মার্কেট মোড</span>
+              <span class="meta-item-value" id="dash-market-mode">Live / OTC Mixed</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-item-label">ভোলাটিলিটি সূচক</span>
+              <span class="meta-item-value" style="color:var(--color-wait);" id="dash-volatility">Moderate (54%)</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-item-label">সুপারিশকৃত টাইমফ্রেম</span>
+              <span class="meta-item-value">1M / 2M Expiry</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-item-label">AI একুরেসি মোড</span>
+              <span class="meta-item-value" style="color:var(--color-up);">Advanced Confluence</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Terminal Signal Slot -->
+        <div id="dashboard-signal-slot">
+          <!-- Reusable signal card -->
+        </div>
+
+        <!-- Strict Trading Discipline Rules Card -->
+        <div class="cyber-card">
+          <div class="cyber-card-title">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>ট্রেডিং নিয়ম ও মানি ম্যানেজমেন্ট</span>
+            </h3>
+          </div>
+          <ul style="font-size: 12px; color: var(--text-secondary); line-height: 1.8; padding-left: 18px;">
+            <li>প্রতিটি ট্রেডে মূলধনের সর্বোচ্চ <strong style="color:var(--color-up);">১% থেকে ২%</strong> এর বেশি ঝুঁকি নিবেন না।</li>
+            <li>মার্কেট সাইডওয়েজ বা দোজি অবস্থায় থাকলে <strong style="color:var(--color-wait);">WAIT</strong> সিগন্যাল মেনে চলুন।</li>
+            <li>দিনে সর্বোচ্চ ৩টি লস হলে সেই দিনের জন্য সেশন বন্ধ করুন।</li>
+            <li>ক্যান্ডেলস্টিক ব্রেকআউটের নিশ্চিত রিটেস্টে এন্ট্রি নিন।</li>
+          </ul>
+        </div>
+      </main>
+
+      <!-- SCREEN 4: AI CHAT ASSISTANT & QUOTEX KNOWLEDGE HUB -->
+      <main id="chat-screen" class="screen">
+        <div class="cyber-card" style="padding-bottom: 8px;">
+          <div class="cyber-card-title">
+            <h3 data-i18n="chatTitle">AI ট্রেডিং এক্সপার্ট ও Quotex নলেজ সেন্টার</h3>
+            <span class="status-badge"><span class="status-dot"></span> AI Online</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 6px;">
+            Quotex-এর সমস্ত ফিচার, ইন্ডিকেটর ও ট্রেডিং স্ট্র্যাটেজি বোঝার পূর্ণাঙ্গ AI হাব
+          </p>
+
+          <!-- Hub Sub-Tabs -->
+          <div class="hub-nav-tabs">
+            <button class="hub-tab-btn active" id="tab-btn-chat" onclick="switchAiTab('chat')">💬 AI ট্রেডিং চ্যাট</button>
+            <button class="hub-tab-btn" id="tab-btn-guide" onclick="switchAiTab('guide')">📚 Quotex ফিচার ও ইন্ডিকেটর</button>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW A: CHAT WINDOW -->
+        <div id="ai-chat-subview">
+          <div class="chat-window">
+            <div class="chat-messages" id="chat-messages-container">
+              <div class="chat-bubble bot">
+                👋 <strong>স্বাগতম! আমি QUOTEX TRADING BOT AI সহকারী।</strong><br>
+                আমি Quotex-এর সমস্ত ইন্ডিকেটর (RSI, Bollinger, MACD, Moving Averages), OTC মার্কেট, ক্যান্ডেলস্টিক প্যাটার্ন ও সঠিক মানি ম্যানেজমেন্ট বিশ্লেষণে প্রশিক্ষিত। নিচের যেকোনো প্রশ্নে ট্যাপ করুন অথবা আপনার প্রশ্ন লিখুন!
+              </div>
+            </div>
+
+            <!-- Quick Prompts Scroll -->
+            <div class="quick-prompts-row" id="quick-prompts">
+              <button class="quick-prompt-chip" onclick="sendQuickPrompt('RSI ইন্ডিকেটর দিয়ে কীভাবে নিখুঁত ট্রেড নিতে হয়?')">RSI কৌশল</button>
+              <button class="quick-prompt-chip" onclick="sendQuickPrompt('Bollinger Bands স্কুইজ ও বাউন্স ট্রেডিং কৌশল কী?')">Bollinger Bands</button>
+              <button class="quick-prompt-chip" onclick="sendQuickPrompt('Quotex OTC মার্কেটে কীভাবে নিরাপদে ট্রেড করতে হয়?')">OTC মার্কেট</button>
+              <button class="quick-prompt-chip" onclick="sendQuickPrompt('মার্টিঙ্গেল কেন ঝুঁকিপূর্ণ এবং ১-২% মানি ম্যানেজমেন্ট রুল কী?')">মানি ম্যানেজমেন্ট</button>
+              <button class="quick-prompt-chip" onclick="sendQuickPrompt('ক্যান্ডেলস্টিক প্যাটার্ন এবং ফেক ব্রেকআউট কীভাবে চিনবো?')">ক্যান্ডেলস্টিক ও ফেকআউট</button>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <form id="chat-form" class="chat-input-bar">
+              <input type="text" id="chat-input" placeholder="ট্রেডিং বা ইন্ডিকেটর সম্পর্কে প্রশ্ন লিখুন..." autocomplete="off">
+              <button type="submit" class="chat-send-btn" title="Send Message">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- SUB-VIEW B: COMPLETE QUOTEX FEATURE & INDICATOR GUIDE -->
+        <div id="ai-guide-subview" style="display: none;">
+          <div class="knowledge-grid">
+
+            <!-- Card 1: RSI -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">📈 RSI (Relative Strength Index)</div>
+                <span class="knowledge-card-badge">মোমেন্টাম</span>
+              </div>
+              <p class="knowledge-card-desc">
+                মার্কেটের ওভারবট (Overbought ৭০+) ও ওভারসোল্ড (Oversold ৩০-) স্তর পরিমাপ করে। যখন বায়ার বা সেলারের অতিরিক্ত চাপ ফুরিয়ে যায় তখন রিভার্সাল ধরার সেরা ইন্ডিকেটর।
+              </p>
+              <div class="knowledge-strategy-box">
+                🟢 <strong>CALL এন্ট্রি:</strong> RSI ৩০-এর নিচে নেমে উপরের দিকে বাউন্স করলে।<br>
+                🔴 <strong>PUT এন্ট্রি:</strong> RSI ৭০-এর উপরে গিয়ে নিচের দিকে বাঁক নিলে।
+              </div>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('RSI ইন্ডিকেটর দিয়ে কীভাবে ট্রেড করতে হয়?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 2: Bollinger Bands -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">🎯 Bollinger Bands</div>
+                <span class="knowledge-card-badge">ভোলাটিলিটি ও রিভার্সাল</span>
+              </div>
+              <p class="knowledge-card-desc">
+                ৩টি ব্যান্ডের মাধ্যমে মূল্যের স্বাভাবিক ওঠানামার সীমা দেখায়। আপার ব্যান্ড ডায়নামিক রেসিস্ট্যান্স এবং লোয়ার ব্যান্ড ডায়নামিক সাপোর্ট হিসেবে কাজ করে।
+              </p>
+              <div class="knowledge-strategy-box">
+                🟢 <strong>CALL এন্ট্রি:</strong> লোয়ার ব্যান্ডে ক্যান্ডেল ছুয়ে রিজেকশন উইক দিলে।<br>
+                🔴 <strong>PUT এন্ট্রি:</strong> আপার ব্যান্ডে ক্যান্ডেল ছুয়ে নিচের দিকে ফিরলে।<br>
+                ⚠️ <strong>ব্যান্ড স্কুইজ:</strong> ব্যান্ড সংকীর্ণ হলে বড় ব্রেকআউট আসছে।
+              </div>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('Bollinger Bands দিয়ে কীভাবে ট্রেড নেওয়া উচিত?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 3: Moving Averages -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">🌊 Moving Averages (EMA 9, 21 & 200 SMA)</div>
+                <span class="knowledge-card-badge">ট্রেন্ড ফিল্টার</span>
+              </div>
+              <p class="knowledge-card-desc">
+                মার্কেটের মূল ট্রেন্ড নির্দেশক। প্রফেশনালরা ২০০ SMA-এর উপরে থাকলে শুধুমাত্র CALL ট্রেড এবং নিচে থাকলে শুধুমাত্র PUT ট্রেড নেন।
+              </p>
+              <div class="knowledge-strategy-box">
+                🟢 <strong>গোল্ডেন ক্রস:</strong> ৯ EMA যখন ২১ EMA-এর উপরে ক্রস করে ➡️ CALL।<br>
+                🔴 <strong>ডেথ ক্রস:</strong> ৯ EMA যখন ২১ EMA-এর নিচে ক্রস করে ➡️ PUT।
+              </div>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('Moving Averages এবং গোল্ডেন ক্রস কীভাবে কাজ করে?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 4: MACD -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">⚡ MACD Indicator</div>
+                <span class="knowledge-card-badge">ট্রেন্ড মোমেন্টাম</span>
+              </div>
+              <p class="knowledge-card-desc">
+                ফাস্ট মুভিং লাইন ও সিগন্যাল লাইনের ক্রসওভার এবং হিস্টোগ্রাম বার দিয়ে ট্রেন্ডের গতি নির্ধারণ করে।
+              </p>
+              <div class="knowledge-strategy-box">
+                🟢 <strong>CALL এন্ট্রি:</strong> নীল লাইন লাল লাইনকে নিচে থেকে উপরে ক্রস করলে।<br>
+                🔴 <strong>PUT এন্ট্রি:</strong> নীল লাইন লাল লাইনকে উপর থেকে নিচে ক্রস করলে।
+              </div>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('MACD ক্রসওভার দেখে কীভাবে সঠিক এন্ট্রি নিতে হয়?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 5: Stochastic Oscillator -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">🎛️ Stochastic Oscillator</div>
+                <span class="knowledge-card-badge">ওভারবট / ওভারসোল্ড</span>
+              </div>
+              <p class="knowledge-card-desc">
+                %K ও %D লাইনের ক্রসওভার। সাইডওয়েজ মার্কেটেও চমৎকার সিগন্যাল দিতে সক্ষম।
+              </p>
+              <div class="knowledge-strategy-box">
+                🟢 ২০ লেভেলের নিচে %K উপরে ক্রস করলে ➡️ <strong>CALL / UP</strong><br>
+                🔴 ৮০ লেভেলের উপরে %K নিচে ক্রস করলে ➡️ <strong>PUT / DOWN</strong>
+              </div>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('Stochastic Oscillator-এর সঠিক সেটিংস ও কৌশল কী?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 6: Williams Alligator -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">🐊 Williams Alligator</div>
+                <span class="knowledge-card-badge">ট্রেন্ড হান্টার</span>
+              </div>
+              <p class="knowledge-card-desc">
+                ৩টি লাইন (চোয়াল, দাঁত ও ঠোঁট)। লাইনগুলো জড়ানো থাকলে মার্কেট ঘুমন্ত (NO TRADE), লাইনগুলো ছড়িয়ে পড়লে মার্কেট ক্ষুধার্ত (ট্রেড নেওয়ার সময়)।
+              </p>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('Alligator ইন্ডিকেটর ব্যবহার করার নিয়ম কী?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 7: Quotex OTC Market -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">🌐 Quotex OTC Market (ওটিসি মার্কেট)</div>
+                <span class="knowledge-card-badge" style="background:rgba(239,68,68,0.15); color:var(--color-down);">উচ্চ ভোলাটিলিটি</span>
+              </div>
+              <p class="knowledge-card-desc">
+                আন্তর্জাতিক মার্কেট ছুটির দিনে ব্রোকারের নিজস্ব অ্যালগরিদমে চলে। এখানে কোনো নিউজ ইভেন্ট থাকে না, কিন্তু অ্যালগরিদমিক উইক (Wick) ও স্পাইক বেশি থাকে।
+              </p>
+              <div class="knowledge-strategy-box">
+                💡 <strong>ওটিসি টিপস:</strong> ব্রেকআউট তাড়া করবেন না। সবসময় হরিজন্টাল সাপোর্ট ও রেসিস্ট্যান্স বাউন্স দেখে ১ মিনিটের ক্যান্ডেল রিভার্সাল ট্রেড করুন।
+              </div>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('Quotex OTC মার্কেটে নিরাপদ ট্রেডিংয়ের রহস্য কী?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 8: Expiry Time Management -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">⏱️ Expiry Time (৫ সেকেন্ড বনাম ১ মিনিট বনাম ৫ মিনিট)</div>
+                <span class="knowledge-card-badge">মেয়াদ ব্যবস্থাপনা</span>
+              </div>
+              <p class="knowledge-card-desc">
+                Quotex-এ ৫ সেকেন্ডের এক্সপায়ারি লোভনীয় হলেও ঝুঁকি সবচেয়ে বেশি। ১ মিনিট থেকে ২ মিনিট হলো টেকনিক্যাল অ্যানালাইসিস উইন রেট বাড়ানোর আদর্শ মেয়াদ।
+              </p>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('ট্রেড করার সময় কোন এক্সপায়ারি টাইম নির্বাচন করা সবচেয়ে ভালো?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 9: Candlestick Patterns -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">🕯️ Candlestick Patterns (হ্যামার, স্টার, এনগালফিং)</div>
+                <span class="knowledge-card-badge">প্রাইস অ্যাকশন</span>
+              </div>
+              <p class="knowledge-card-desc">
+                Hammer (সাপোর্টে রিভার্সাল), Shooting Star (রেসিস্ট্যান্সে রিজেকশন), Bullish/Bearish Engulfing (ট্রেন্ড কনটিনিউয়েশন), Doji (সিদ্ধান্তহীনতা)।
+              </p>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('ক্যান্ডেলস্টিক প্যাটার্ন কীভাবে চিনবো এবং রিভার্সাল ট্রেড নিবো?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+            <!-- Card 10: Martingale vs 1-2% Rule -->
+            <div class="knowledge-card">
+              <div class="knowledge-card-header">
+                <div class="knowledge-card-title">🛡️ Martingale বনাম ১-২% মানি ম্যানেজমেন্ট</div>
+                <span class="knowledge-card-badge" style="background:rgba(16,185,129,0.15); color:var(--color-up);">মূলধন সুরক্ষা</span>
+              </div>
+              <p class="knowledge-card-desc">
+                মার্টিঙ্গেল ব্যবহার করলে ৩-৪টি লসের পর পুরো ব্যালেন্স ০ হয়ে যায়। তাই প্রফেশনালরা সবসময় ফিক্সড ১% থেকে ২% ক্যাপিটাল রুল এবং দৈনিক ৩টি লসের পর ট্রেডিং বন্ধ রাখার নিয়ম মানেন।
+              </p>
+              <button class="knowledge-btn-ask" onclick="askAiTopic('Quotex-এ কীভাবে ব্যালেন্স সুরক্ষিত রাখতে হয়?')">
+                AI ব্যাখ্যা জানুন 💬
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <!-- SCREEN 5: SETTINGS & CUSTOMIZATION -->
+      <main id="settings-screen" class="screen">
+        <div class="cyber-card">
+          <div class="cyber-card-title">
+            <h3 data-i18n="settingsTitle">কন্ট্রোল ও সেটিংস প্যানেল</h3>
+          </div>
+
+          <!-- AI Engine Configuration -->
+          <div class="settings-group">
+            <label class="settings-label" data-i18n="aiConfig">AI ইঞ্জিন ও প্রোভাইডার সেটিংস</label>
+            <select class="custom-select" id="ai-provider-select">
+              <option value="autonomous">Autonomous Built-in Engine (Default / No API Key required)</option>
+              <option value="gemini">Google Gemini (Gemini 1.5 Flash / Pro)</option>
+              <option value="openai">ChatGPT / OpenAI (GPT-4o / GPT-4o-mini)</option>
+              <option value="claude">Anthropic Claude (Claude 3.5 Sonnet)</option>
+              <option value="groq">Groq AI (Ultra-Fast Llama 3.2 Vision)</option>
+              <option value="openrouter">OpenRouter (Multi-Model Router)</option>
+              <option value="custom">Custom Compatible Endpoint</option>
+            </select>
+
+            <div id="api-key-container" style="margin-top: 10px;">
+              <label class="settings-label" data-i18n="apiKeyLabel">প্রোভাইডার API Key</label>
+              <div class="input-field-wrapper">
+                <input type="password" id="settings-api-key" placeholder="AI API Key পেস্ট করুন...">
+                <button type="button" class="toggle-password-btn" id="toggle-settings-key">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
+              <button class="btn-stream" id="test-api-btn" style="width: 100%; margin-top: 8px;">
+                <span data-i18n="testApiBtn">API কানেকশন টেস্ট করুন</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Theme Customizer -->
+          <div class="settings-group">
+            <label class="settings-label" data-i18n="themeSelector">থিম নির্বাচন (Theme Center)</label>
+            <div class="theme-grid">
+              <div class="theme-card active" data-theme-val="dark-pro">Dark Pro</div>
+              <div class="theme-card" data-theme-val="cyberpunk">Cyberpunk</div>
+              <div class="theme-card" data-theme-val="neon-green">Neon Green</div>
+              <div class="theme-card" data-theme-val="midnight-blue">Midnight Blue</div>
+              <div class="theme-card" data-theme-val="amoled">AMOLED Black</div>
+              <div class="theme-card" data-theme-val="light">Light Mode</div>
+              <div class="theme-card" data-theme-val="glassmorphism">Glassmorphism</div>
+              <div class="theme-card" data-theme-val="hacker">Hacker Terminal</div>
+            </div>
+          </div>
+
+          <!-- UI Layout Selector -->
+          <div class="settings-group">
+            <label class="settings-label" data-i18n="layoutSelector">ড্যাশবোর্ড লেআউট</label>
+            <div class="layout-grid">
+              <div class="layout-card active" data-layout-val="classic">Classic Trading</div>
+              <div class="layout-card" data-layout-val="terminal">AI Terminal</div>
+              <div class="layout-card" data-layout-val="analytics">Professional Analytics</div>
+              <div class="layout-card" data-layout-val="minimalist">Minimalist Mode</div>
+            </div>
+          </div>
+
+          <!-- Sound & Feedback Toggles -->
+          <div class="settings-group">
+            <div class="toggle-row">
+              <span style="font-size: 13px;" data-i18n="soundToggle">অডিও ও সিগন্যাল সাউন্ড</span>
+              <label class="switch">
+                <input type="checkbox" id="sound-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <span style="font-size: 13px;" data-i18n="hapticToggle">ভাইব্রেশন ও হ্যাপটিক টাচ</span>
+              <label class="switch">
+                <input type="checkbox" id="haptic-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Risk Disclaimer -->
+          <div class="risk-alert-box" style="margin-top: 20px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <div>
+              <strong data-i18n="disclaimerTitle">ঝুঁকি সতর্কতা ও নীতি:</strong>
+              <p style="margin-top: 4px; font-size: 11px; line-height: 1.4;" data-i18n="disclaimerText">
+                বাইনারি অপশন ট্রেডিংয়ে আর্থিক ঝুঁকির সম্ভাবনা থাকে। এই AI বট কোনো ভুয়া বা ১০০% নিশ্চিত লাভের দাবি করে না। এটি শুধুমাত্র ক্যান্ডেলস্টিক প্যাটার্ন ও প্রাইজ অ্যাকশন ভিত্তিক টেকনিক্যাল গাইডেন্স প্রদান করে।
+              </p>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 20px; font-size: 11px; color: var(--text-secondary);">
+            QUOTEX TRADING BOT v1.0.0 Pro • Developed by <strong>Mk Mahin Choudhory</strong>
+          </div>
+        </div>
+      </main>
+
+      <!-- ANDROID BOTTOM NAVIGATION BAR -->
+      <nav class="bottom-nav" id="bottom-nav">
+        <div class="nav-item active" data-target="live-screen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          <span data-i18n="navLive">লাইভ</span>
+        </div>
+        <div class="nav-item" data-target="upload-screen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span data-i18n="navUpload">আপলোড</span>
+        </div>
+        <div class="nav-item" data-target="dashboard-screen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span data-i18n="navDashboard">ড্যাশবোর্ড</span>
+        </div>
+        <div class="nav-item" data-target="chat-screen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span data-i18n="navChat">AI চ্যাট</span>
+        </div>
+        <div class="nav-item" data-target="settings-screen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span data-i18n="navSettings">সেটিংস</span>
+        </div>
+      </nav>
+
+    </div> <!-- End of #dashboard-view -->
+
+  </div> <!-- End of #app -->
+
+  <script src="/js/audio.js?v=1.0.2"></script>
+  <script src="/js/i18n.js?v=1.0.2"></script>
+  <script src="/js/app.js?v=1.0.2"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
